@@ -1,56 +1,32 @@
-# Foundry agent modalities demo
+# Compare Prompt Agents and Hosted Agents
 
-This demo sends one fictional support case through two Microsoft Foundry Agent Service paths:
+This demo uses one fictional customer-support case to explain the two agent types in Microsoft
+Foundry Agent Service:
 
-- **Prompt Agent:** a declarative agent whose triage rubric lives in instructions.
-- **Hosted Agent:** an Agent Framework application whose triage rubric is a deterministic,
-  unit-tested local Python tool.
+- A **Prompt Agent** keeps the triage policy in agent instructions. Microsoft Foundry runs the agent
+  harness, so there is no agent application to deploy or maintain.
+- A **Hosted Agent** keeps the same triage policy in Python code. You own the code and its
+  dependencies; Microsoft Foundry deploys, hosts, scales, and exposes it through a managed endpoint.
 
-The learning objective is **who owns the rule and harness**, not which generated paragraph looks
-better.
+The demo helps a customer answer one question:
 
-## Status
+> **Do we need to own and change the agent's runtime logic, or do we want Foundry to operate it for
+> us?**
 
-- Four deterministic Hosted-rule tests: passed.
-- Disposable Foundry project: provisioned in North Central US with `gpt-5.6-sol`.
-- Live Prompt invocation: passed; Prompt Agent version 1 retained for inspection.
-- Live Hosted invocation: passed locally and remotely; deterministic tool call verified in both.
-- Remote Hosted deployment: active version 1, Responses protocol, direct code deployment.
-- Evaluation-suite generation: submitted asynchronously.
-- Cleanup: intentionally deferred until review/demo evidence is final; the disposable environment
-  incurs costs until `azd down` is run from `deployment/`.
+Both agents receive the same input and return the same priority. The difference is where the policy
+lives and who is responsible for it.
 
-## Repository layout
+## What you will show
 
 ```text
-.
-├── AGENTS.md
-├── README.md
-├── sample_case.json
-├── prompt_agent/
-│   ├── .env.example
-│   ├── create_and_run.py
-│   ├── instructions.md
-│   └── requirements.txt
-├── hosted_agent/
-│   ├── .env.example
-│   ├── main.py
-│   ├── priority_rules.py
-│   ├── requirements.txt
-│   └── tests/
-│       └── test_priority_rules.py
-├── deployment/
-│   ├── azure.yaml
-│   └── src/agent-framework-agent-with-local-tools-responses/
-│       ├── main.py
-│       ├── priority_rules.py
-│       └── requirements.txt
-└── .vscode/
-    ├── launch.json
-    └── tasks.json
+                              Microsoft Foundry Agent Service
+
+  Same support case ──┬──> Prompt Agent ──> Policy in instructions ──> P0
+                      │
+                      └──> Hosted Agent ──> Policy in Python code ───> P0
 ```
 
-## Fictional case
+The fictional case is deliberately simple:
 
 ```text
 Customer: Contoso Retail
@@ -60,126 +36,309 @@ Regulated regions affected: 2
 Renewal in: 21 days
 ```
 
-Expected deterministic Hosted result:
+Both paths should return:
 
-```json
-{
-  "priority": "P0",
-  "score": 8,
-  "reason_codes": [
-    "OUTAGE_60",
-    "STRATEGIC_CONTRACT",
-    "REGULATED_IMPACT",
-    "RENEWAL_30"
-  ]
-}
+- priority `P0`;
+- score `8`; and
+- reason codes `OUTAGE_60`, `STRATEGIC_CONTRACT`, `REGULATED_IMPACT`, and `RENEWAL_30`.
+
+The values and thresholds are fictional. They are not Microsoft support policy.
+
+## Before you begin
+
+You need:
+
+- macOS or Linux;
+- Python 3.13 or later;
+- Azure CLI, signed in with `az login`;
+- Azure Developer CLI 1.32 or later, signed in with `azd auth login`;
+- an Azure subscription where you can create a resource group and Microsoft Foundry resources; and
+- available quota for `gpt-5.6-sol` in North Central US.
+
+Install the current Foundry Agent extension:
+
+```bash
+azd extension install azure.ai.agents --source azd
 ```
 
-## 1. Test the customer-owned rule without Azure
+> **Cost notice:** Setup creates a Foundry project, model deployment, Prompt Agent, and Hosted Agent.
+> Model calls and Hosted Agent sessions can incur charges. Complete the cleanup section after the
+> demo.
 
-Python 3.10 or later is sufficient for this pure rule test:
+## Set up the demo
+
+### 1. Open the demo folder
+
+```bash
+cd ~/source/demos/foundry-agent-modalities
+```
+
+### 2. Check the local policy code
+
+The Hosted Agent uses a small Python function to calculate priority. Run its automated checks before
+creating cloud resources:
 
 ```bash
 python3 -m unittest discover -s hosted_agent/tests -v
 ```
 
-This is the key Hosted proof: the business rule can be versioned and tested independently from the
-model.
+Why this check exists: the Hosted path is useful when a business rule must be deterministic,
+versioned, and independently testable. The check confirms that the rule returns the expected score
+without relying on a model. It is preparation evidence; it does not need to be part of a normal
+customer presentation.
 
-## 2. Run the Prompt Agent path
+### 3. Create an azd environment
 
-Prerequisites:
-
-- an authenticated Azure CLI session;
-- an existing Foundry project;
-- a deployed model; and
-- permission to create Prompt Agent versions.
-
-Set up locally:
+Choose a unique environment name. The example below uses `foundry-modalities-demo`:
 
 ```bash
-cd prompt_agent
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-cp .env.example .env
+cd deployment
+azd env new foundry-modalities-demo
+azd env set AZURE_SUBSCRIPTION_ID "$(az account show --query id -o tsv)"
+azd env set AZURE_LOCATION northcentralus
+azd env set AZURE_AI_MODEL_DEPLOYMENT_NAME gpt-5.6-sol
 ```
 
-Populate `.env` with the project endpoint and deployed model name, then run:
+If the environment already exists, select it instead:
 
 ```bash
-python create_and_run.py
+azd env select foundry-modalities-demo
 ```
 
-The script creates a new Prompt Agent version, invokes the shared fictional case, and prints the
-version plus response. By default it preserves the version so the presenter can inspect it. Set
-`DELETE_AFTER_RUN=true` only for a disposable validation environment.
+### 4. Provision the Foundry project
 
-## 3. Run the Hosted Agent locally
+```bash
+AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd provision --no-state --no-prompt
+```
 
-Python 3.13 or later is required by the current Hosted code-deployment path:
+Provisioning creates a resource group, Foundry account and project, `gpt-5.6-sol` deployment, and the
+supporting resources required for Hosted Agents.
 
-The deployable source is under `deployment/src/agent-framework-agent-with-local-tools-responses/`.
-Create a Python 3.13 virtual environment there, set its ignored `.env`, and run through `azd ai agent
-run --no-client` from `deployment/`. On this machine, global `uv` could not reach
-`files.pythonhosted.org`; pip through the configured Microsoft package proxy succeeded. Exclude the
-global `uv` path or install requirements with pip if that network condition persists.
+Verify the project:
 
-The local server listens on port 8088. Invoke it with the current `azd ai agent invoke --local`
-flow, or press F5 from the repository root after the Hosted source virtual environment exists.
+```bash
+AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent doctor --output json
+```
 
-## 4. Deployment source
+Before the Hosted Agent is deployed, the diagnostic result should show that the project is reachable
+and that the only remaining agent action is deployment.
 
-The `deployment/` project was initialized from the current official local-tools sample and then
-customized for the support-triage case:
+### 5. Create the local environment files
+
+Return to the repository root and run the helper:
+
+```bash
+cd ..
+bash scripts/configure-local-env.sh
+```
+
+The helper copies the provisioned project endpoint and model deployment name into ignored `.env`
+files for the Prompt and local Hosted paths. It does not copy credentials or tokens.
+
+### 6. Install the Prompt Agent dependencies
+
+```bash
+python3.13 -m venv prompt_agent/.venv
+prompt_agent/.venv/bin/python -m pip install -r prompt_agent/requirements.txt
+```
+
+### 7. Create and test the Prompt Agent
+
+```bash
+prompt_agent/.venv/bin/python prompt_agent/create_and_run.py
+```
+
+This command:
+
+1. creates a Prompt Agent version named `field-demo-support-triage-prompt`;
+2. sends the fictional case;
+3. prints the response; and
+4. preserves the version so it can be shown in the Foundry portal.
+
+Expect `P0`, score `8`, and the four reason codes listed earlier.
+
+### 8. Install the Hosted Agent dependencies
+
+```bash
+python3.13 -m venv deployment/src/agent-framework-agent-with-local-tools-responses/.venv
+deployment/src/agent-framework-agent-with-local-tools-responses/.venv/bin/python \
+  -m pip install \
+  -r deployment/src/agent-framework-agent-with-local-tools-responses/requirements.txt
+```
+
+The deployable Hosted Agent source is in
+`deployment/src/agent-framework-agent-with-local-tools-responses/`.
+
+### 9. Test the Hosted Agent locally
+
+Start the local server from the `deployment` folder:
+
+```bash
+cd deployment
+source src/agent-framework-agent-with-local-tools-responses/.venv/bin/activate
+AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent run --no-client
+```
+
+Wait until the terminal says that the agent is ready and is running on port 8088. Leave that terminal
+open.
+
+In a second terminal, run:
+
+```bash
+cd ~/source/demos/foundry-agent-modalities/deployment
+AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent invoke \
+  field-demo-support-triage-hosted \
+  --local \
+  --new-session \
+  --new-conversation \
+  'Triage this support case. Customer: Contoso Retail. Annual contract: $240,000. Production outage: 95 minutes. Regulated regions affected: 2. Renewal in: 21 days. Summarize the priority, reason codes, first response, and next three actions.'
+```
+
+Expect the same priority, score, and reason codes as the Prompt Agent. The local server log should
+show one call to `calculate_case_priority`.
+
+Stop the local server with **Control+C** before continuing.
+
+### 10. Deploy and test the Hosted Agent
+
+From the `deployment` folder:
+
+```bash
+AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd deploy \
+  field-demo-support-triage-hosted \
+  --no-prompt
+```
+
+Verify that the new version is active:
+
+```bash
+AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent show \
+  field-demo-support-triage-hosted \
+  --output json
+```
+
+Then run the same case against both deployed paths:
+
+```bash
+cd ..
+bash scripts/run-customer-demo.sh
+```
+
+The helper invokes the existing Prompt Agent and the deployed Hosted Agent back to back. It does not
+create another agent version.
+
+## Present the demo
+
+Use [CUSTOMER_DEMO.md](CUSTOMER_DEMO.md) for the exact presentation sequence and suggested language.
+It is designed for a seven-minute customer conversation and includes a fallback if a live call fails.
+
+At a high level:
+
+1. Show the single customer scenario in `sample_case.json`.
+2. Open `prompt_agent/instructions.md` and explain that the Prompt Agent policy is configuration.
+3. Invoke the Prompt Agent.
+4. Open `deployment/src/agent-framework-agent-with-local-tools-responses/priority_rules.py` and
+   explain that the Hosted Agent policy is customer-owned code.
+5. Invoke the Hosted Agent.
+6. Close by asking whether the customer needs to own the runtime rule.
+
+Do not present the demo as a quality contest. Both paths are expected to reach the same decision.
+
+## Clean up
+
+Cleanup deletes the disposable Azure resource group and all agents, model deployments, sessions, and
+telemetry in it. It does not delete the source code.
+
+First capture the resource group name, then delete the resources:
+
+```bash
+cd deployment
+RESOURCE_GROUP="$(azd env get-value AZURE_RESOURCE_GROUP)"
+AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd down --force --purge
+```
+
+Confirm that the resource group is gone:
+
+```bash
+az group exists --name "$RESOURCE_GROUP"
+```
+
+The command should return `false`.
+
+Optionally remove local generated state:
+
+```bash
+cd ..
+rm -rf prompt_agent/.venv
+rm -rf deployment/src/agent-framework-agent-with-local-tools-responses/.venv
+rm -f prompt_agent/.env
+rm -f deployment/src/agent-framework-agent-with-local-tools-responses/.env
+```
+
+## Troubleshooting
+
+### `uv` cannot reach `files.pythonhosted.org`
+
+On this machine, a globally installed `uv` sometimes bypasses the Microsoft package proxy and fails
+to download dependencies. Install the requirements with the virtual environment's `pip`, as shown in
+the setup steps. If `azd ai agent run` still chooses the global `uv`, temporarily remove
+`~/.local/bin` from `PATH` for that command.
+
+### The Hosted Agent is not deployed
+
+Run:
+
+```bash
+cd deployment
+AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent doctor --output json
+```
+
+Follow the first failed check. If every project check passes and only the agent is missing, run the
+deployment step again.
+
+### The model cannot be found
+
+Confirm that both values refer to the same deployment:
+
+```bash
+cd deployment
+azd env get-value AZURE_AI_MODEL_DEPLOYMENT_NAME
+azd env get-value FOUNDRY_PROJECT_ENDPOINT
+```
+
+Then rerun `scripts/configure-local-env.sh` from the repository root.
+
+### The live demo fails in front of the audience
+
+Do not switch to an unrelated demo. Use the fallback in [CUSTOMER_DEMO.md](CUSTOMER_DEMO.md): show
+the two source files, the last validated output, and the exact failure category.
+
+## Project structure
 
 ```text
-https://github.com/microsoft-foundry/foundry-samples/blob/main/samples/python/hosted-agents/agent-framework/responses/02-tools/azure.yaml
+foundry-agent-modalities/
+├── README.md                 # Setup, run, and cleanup quickstart
+├── CUSTOMER_DEMO.md          # Seven-minute customer presentation script
+├── sample_case.json          # Fictional input shared by both paths
+├── scripts/
+│   ├── configure-local-env.sh
+│   └── run-customer-demo.sh
+├── prompt_agent/
+│   ├── instructions.md       # Policy expressed as Prompt Agent configuration
+│   ├── create_and_run.py     # One-time create and validation
+│   └── invoke.py             # Reusable presentation invocation
+├── hosted_agent/
+│   └── tests/                # Optional pre-demo check of deterministic logic
+└── deployment/
+    ├── azure.yaml            # Disposable Foundry project and Hosted Agent definition
+    └── src/agent-framework-agent-with-local-tools-responses/
+        ├── main.py           # Hosted Agent and local tool registration
+        └── priority_rules.py # Customer-owned deterministic policy
 ```
 
-The completed validation followed this sequence:
+## Learn more
 
-1. local run with `--no-client`;
-2. local invoke with the shared case;
-3. stop the local server;
-4. deploy only after local success;
-5. verify active status;
-6. remote invoke; and
-7. retain the temporary versions for review, then delete the project after the presentation.
-
-All `azd` commands should set `AZURE_DEV_USER_AGENT=microsoft_foundry_skill` inline.
-
-## Presenter proof points
-
-| Prompt path | Hosted path |
-| --- | --- |
-| Rubric is readable configuration | Rubric is executable Python |
-| No runtime application code | Customer owns code and dependencies |
-| Fastest managed starting point | Deterministic logic has unit tests |
-| Foundry operates the harness | Foundry hosts customer harness code |
-
-## Known local prerequisites as of 2026-08-27
-
-- `azd` 1.32.0 is installed; the workflow required an upgrade from 1.28.0.
-- Official `azure.ai.agents` 1.0.0-beta.13 is installed. The private `mha-dev` extension source
-  remains registered but was not used for this deployment.
-- The bundled Foundry skill references preflight helper scripts that are absent from its installed
-  package. The general dependency check succeeded, and `az account show` plus the live azd sample
-  list succeeded. Treat the missing helper as a tooling issue, not demo validation.
-- The deployment logs emit a non-blocking optional A365 instrumentation import warning and state
-  that resilient background tasks are disabled. This demo does not claim crash-resilient work.
-
-## Inspect and clean up
-
-- Open the deployed Hosted Agent using the `playground_url` returned by `azd ai agent show`.
-- Run `azd ai agent eval run` later if the generated evaluation suite is useful.
-- When the demo no longer needs inspection, run `azd down` from `deployment/` to delete the
-  disposable resource group and avoid ongoing cost.
-
-## Sources
-
+- <https://learn.microsoft.com/azure/foundry/agents/overview>
 - <https://learn.microsoft.com/azure/foundry/agents/quickstarts/prompt-agent>
 - <https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent>
-- <https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-deploy-own-code>
 - <https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents>
-- <https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/python/hosted-agents/agent-framework/responses/02-tools>
