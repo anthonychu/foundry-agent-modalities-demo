@@ -70,7 +70,7 @@ def main() -> None:
                 model=model,
                 instructions=instructions,
             ),
-            description="Field demo: declarative support-case triage rubric.",
+            description="Sample: declarative support-case triage rubric.",
         )
         print(
             "Prompt Agent created: "

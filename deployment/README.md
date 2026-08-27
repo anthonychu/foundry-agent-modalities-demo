@@ -1,132 +1,39 @@
-# Upstream scaffold reference - customized for the modalities demo
+# Deploy the Hosted Agent
 
-This file came from the official **Agent with Local Tools** sample used to initialize the deployment
-project. The deployable source has been customized from the sample weather tool to the deterministic
-fictional support-priority tool. Use the repository-root README for the current demo instructions,
-validation state, project lifecycle, and cleanup steps. Weather prompts below are retained only as
-upstream sample documentation and do not describe the customized agent.
+This folder contains the Microsoft Foundry project and Hosted Agent deployment manifest for the
+fictional support-triage comparison. Use the [repository quickstart](../README.md) for the complete
+setup, Prompt Agent, Hosted Agent, presentation, troubleshooting, and cleanup workflow.
 
-## Original sample documentation
+## Deployable source
 
-# Agent with Local Tools (Responses Protocol)
+The Hosted Agent implementation is under
+`src/agent-framework-agent-with-local-tools-responses/`:
 
-An [Agent Framework](https://github.com/microsoft/agent-framework) agent with **locally-defined Python tools** hosted on Microsoft Foundry using the **Responses protocol**. This sample shows how to define custom tools with the `@tool` decorator and register them with the agent so the model can call them during a conversation. A `get_weather` function is included as an example tool.
+- `main.py` registers the deterministic priority function as a local Agent Framework tool and serves
+   the agent through the Responses protocol.
+- `priority_rules.py` owns the fictional scoring policy.
+- `tests/` validates the exact policy module that is packaged for deployment. Tests are excluded
+   from the deployed artifact by `.azdignore` and `.agentignore`.
+- `requirements.txt` pins the direct dependency versions used for the August 27, 2026 validation.
 
-> **When to use local tools vs. a toolbox:** Local `@tool` functions are the right choice for self-contained logic you own and run in-process. For tools you want to share across agents — web search, code interpreter, MCP servers, OpenAPI, and more — package them behind a [Foundry Toolbox](../04-foundry-toolbox/) instead, which adds a single managed MCP endpoint with centralized authentication and versioning. See the [Foundry Toolbox sample](../04-foundry-toolbox/) and the [toolbox documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox).
+The scaffold was initialized from the public
+[Microsoft Foundry Agent with Local Tools sample](https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/python/hosted-agents/agent-framework/responses/02-tools)
+and customized for this repository. See the root [LICENSE](../LICENSE).
 
-## How it works
+## Important boundaries
 
-The agent uses `FoundryChatClient` from the Agent Framework and is served via `ResponsesHostServer`. Custom tools are defined with the `@tool` decorator — the model sees each function's signature and docstring and decides when to call them. See [main.py](src/agent-framework-agent-with-local-tools-responses/main.py) for the implementation.
+- The Python `agent-framework-foundry-hosting` integration is prerelease even though the Hosted
+   Agents service is generally available.
+- The manifest currently provisions `gpt-5.6-sol` version `2026-07-09` in North Central US. Check
+   the current [model availability table](https://learn.microsoft.com/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure-region-availability)
+   before deploying or substitute another compatible chat model.
+- Provisioning and model/agent use can incur Azure charges. Run the root README's cleanup procedure
+   when the demo is no longer needed.
+- Never commit `.azure/`, `.env`, credentials, endpoints, subscription IDs, resource identifiers, or
+   exported logs.
 
-## Option 1: Azure Developer CLI (`azd`)
+## Useful public references
 
-### Prerequisites
-
-1. **Azure Developer CLI (`azd`)** — [Install azd](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd)
-2. Install the AI agent extension:
-   ```bash
-   azd ext install microsoft.foundry
-   ```
-3. Authenticate:
-   ```bash
-   azd auth login
-   ```
-
-### Initialize the agent project
-
-No cloning required. Create a new folder and initialize from the manifest:
-
-```bash
-mkdir my-tools-agent && cd my-tools-agent
-
-azd ai agent init -m https://github.com/microsoft-foundry/foundry-samples/blob/main/samples/python/hosted-agents/agent-framework/responses/02-tools/azure.yaml
-```
-
-Follow the prompts to configure your Foundry project and model deployment. If you don't have an existing Foundry project, `azd ai agent init` will guide you through creating one.
-
-### Provision Azure resources (if needed)
-
-If you don't already have a Foundry project and model deployment:
-
-```bash
-azd provision
-```
-
-### Run the agent locally
-
-```bash
-azd ai agent run
-```
-
-The agent host will start on `http://localhost:8088`.
-
-### Invoke the local agent
-
-In a separate terminal, from the project directory:
-
-```bash
-azd ai agent invoke --local "What is the weather in Seattle?"
-```
-
-### Deploy to Foundry
-
-Once tested locally, deploy to Microsoft Foundry:
-
-```bash
-azd deploy
-```
-
-For the full deployment guide, see [Deploy a hosted agent](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/deploy-hosted-agent).
-
-### Invoke the deployed agent
-
-```bash
-azd ai agent invoke "What is the weather in Seattle?"
-```
-
-## Option 2: VS Code (Foundry Toolkit)
-
-### Prerequisites
-
-1. **VS Code** with the **[Foundry Toolkit](https://marketplace.visualstudio.com/items?itemName=ms-windows-ai-studio.windows-ai-studio)** extension installed.
-2. For debugging Python in VS Code, install the **[Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)** extension pack.
-
-### Set up the Python virtual environment
-
-- Open the Command Palette (`Ctrl+Shift+P`) and run **Python: Create Environment...** to create a virtual environment in the workspace (or **Python: Select Interpreter** to use an existing one).
-- Install dependencies in the virtual environment:
-
-  ```bash
-  # use uv to accelerate
-  pip install uv
-  uv pip install -r requirements.txt
-
-  # or pure pip
-  pip install -r requirements.txt
-  ```
-
-### Run and debug the agent
-
-Press **F5** to start the agent. The agent starts and the **Agent Inspector** opens automatically. Chat with the agent in the Inspector.
-
-### Or run manually, then open the Inspector
-
-1. Set the required environment variables and sign in to Azure with the Azure CLI (`az login`).
-2. Start the agent: `python main.py` (listens on `http://localhost:8088`).
-3. Command Palette (`Ctrl+Shift+P`) → **Foundry Toolkit: Open Agent Inspector**, then send a message to test.
-
-### Deploy to Foundry
-
-1. Open the Command Palette (`Ctrl+Shift+P`) and run **Foundry Toolkit: Deploy Hosted Agent**. The extension opens a **Deploy Hosted Agent** wizard and reads `agent.yaml` to auto-populate settings.
-2. If prompted, complete **Foundry Project Setup** to select subscription and project.
-3. On the **Basics** tab, choose deployment method (**Code** or **Container**) and confirm the agent name.
-4. On **Review + Deploy**, confirm runtime details, pick **CPU and Memory** size, and click **Deploy**.
-5. After deployment, invoke the agent in the Agent Playground and stream live logs from the **Logs** tab.
-
-## Next steps
-
-- [Quickstart: Create a hosted agent](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-hosted-agent) — end-to-end walkthrough using `azd`
-- [Tool catalog](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/tool-catalog) — browse available tools to extend your agent (Bing Search, Azure AI Search, file search, code interpreter, and more)
-- [Manage hosted agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/manage-hosted-agent) — monitor and manage deployed agents
-- [Basic agent](../01-basic/) — minimal agent with no tools
-- [Use Foundry Toolbox](../04-foundry-toolbox/) — sample with Azure Foundry Toolbox integration
+- [Quickstart: Deploy your first Hosted Agent](https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent)
+- [Host Agent Framework agents in Foundry](https://learn.microsoft.com/azure/foundry/how-to/develop/framework-hosted-agents)
+- [Hosted Agents overview](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents)

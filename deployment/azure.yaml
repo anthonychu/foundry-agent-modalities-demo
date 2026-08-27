@@ -2,7 +2,7 @@
 
 requiredVersions:
     extensions:
-        azure.ai.agents: '>=1.0.0-beta.12'
+        azure.ai.agents: '>=1.0.0-beta.13'
 name: field-demo-support-triage
 services:
     ai-project:
@@ -13,7 +13,7 @@ services:
         metadata:
             tags:
                 - Agent Framework
-                - Field Enablement Demo
+                - Sample
                 - Local Tools
                 - Responses Protocol
         project: src/agent-framework-agent-with-local-tools-responses

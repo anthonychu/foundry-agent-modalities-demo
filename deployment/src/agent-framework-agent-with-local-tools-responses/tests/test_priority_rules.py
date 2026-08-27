@@ -7,8 +7,8 @@ import unittest
 from pathlib import Path
 
 
-HOSTED_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(HOSTED_ROOT))
+DEPLOYABLE_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(DEPLOYABLE_ROOT))
 
 from priority_rules import calculate_priority  # noqa: E402
 

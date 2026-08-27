@@ -289,7 +289,9 @@ Agent and validating the scenario before taking on a Hosted application.
 For a developer audience, show that the Hosted rule has automated checks:
 
 ```bash
-python3 -m unittest discover -s hosted_agent/tests -v
+python3.13 -m unittest discover \
+  -s deployment/src/agent-framework-agent-with-local-tools-responses/tests \
+  -v
 ```
 
 Explain it in plain language:

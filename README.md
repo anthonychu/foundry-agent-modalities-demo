@@ -1,5 +1,9 @@
 # Compare Prompt Agents and Hosted Agents
 
+> **Sample status:** This is an unsupported demonstration, not Microsoft product documentation,
+> support policy, SLA, roadmap commitment, or guarantee. The support scenario and scoring policy are
+> fictional. Validate current product availability, prerequisites, and pricing before using it.
+
 This demo compares two implementations of a support-triage agent in Microsoft Foundry Agent Service.
 The agent reads customer and incident facts, applies four scoring rules, assigns a support priority,
 drafts a first response, and recommends three next actions:
@@ -76,6 +80,16 @@ You need:
 - an Azure subscription where you can create a resource group and Microsoft Foundry resources; and
 - available quota for `gpt-5.6-sol` in North Central US.
 
+This sample was validated on August 27, 2026 with `gpt-5.6-sol` version `2026-07-09`. Model and
+region availability changes over time. Before provisioning, check the current
+[model availability table](https://learn.microsoft.com/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure-region-availability)
+and update the model name, version, deployment name, and region in `deployment/azure.yaml` when
+using another compatible chat model.
+
+The validated Python dependencies are pinned in the requirements files. The Python
+`agent-framework-foundry-hosting` integration is prerelease even though the Hosted Agents service is
+generally available, so review dependency updates before adopting this sample.
+
 Install the current Foundry Agent extension:
 
 ```bash
@@ -90,8 +104,10 @@ azd extension install azure.ai.agents --source azd
 
 ### 1. Open the demo folder
 
+Clone or download this repository, then change to its root folder:
+
 ```bash
-cd ~/source/demos/foundry-agent-modalities
+cd foundry-agent-modalities
 ```
 
 ### 2. Optional but recommended: check the local policy code
@@ -100,7 +116,9 @@ The Hosted Agent uses a small Python function to calculate priority. Run its aut
 creating cloud resources:
 
 ```bash
-python3 -m unittest discover -s hosted_agent/tests -v
+python3.13 -m unittest discover \
+  -s deployment/src/agent-framework-agent-with-local-tools-responses/tests \
+  -v
 ```
 
 Why this check exists: the Hosted path is useful when a business rule must return the same result for
@@ -216,7 +234,7 @@ open.
 In a second terminal, run:
 
 ```bash
-cd ~/source/demos/foundry-agent-modalities/deployment
+cd foundry-agent-modalities/deployment
 AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent invoke \
   field-demo-support-triage-hosted \
   --local \
@@ -320,12 +338,11 @@ rm -f deployment/src/agent-framework-agent-with-local-tools-responses/.env
 
 ## Troubleshooting
 
-### `uv` cannot reach `files.pythonhosted.org`
+### `uv` cannot download dependencies
 
-On this machine, a globally installed `uv` sometimes bypasses the Microsoft package proxy and fails
-to download dependencies. Install the requirements with the virtual environment's `pip`, as shown in
-the setup steps. If `azd ai agent run` still chooses the global `uv`, temporarily remove
-`~/.local/bin` from `PATH` for that command.
+Install the requirements with the virtual environment's `pip`, as shown in the setup steps. If
+`azd ai agent run` still selects an incompatible global `uv`, adjust `PATH` for that command or use
+the documented `pip` setup before trying again.
 
 ### The Hosted Agent is not deployed
 
@@ -372,14 +389,20 @@ foundry-agent-modalities/
 │   ├── instructions.md       # Policy expressed as Prompt Agent configuration
 │   ├── create_and_run.py     # One-time create and validation
 │   └── invoke.py             # Reusable presentation invocation
-├── hosted_agent/
-│   └── tests/                # Optional pre-demo check of deterministic logic
 └── deployment/
     ├── azure.yaml            # Disposable Foundry project and Hosted Agent definition
     └── src/agent-framework-agent-with-local-tools-responses/
         ├── main.py           # Hosted Agent and local tool registration
-        └── priority_rules.py # Customer-owned deterministic policy
+      ├── priority_rules.py # Customer-owned deterministic policy
+      └── tests/            # Checks the exact policy module that is deployed
 ```
+
+## License and provenance
+
+The Hosted Agent deployment scaffold was initialized from the public
+[Microsoft Foundry Agent with Local Tools sample](https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/python/hosted-agents/agent-framework/responses/02-tools)
+and customized for this fictional triage scenario. The upstream sample is licensed under the MIT
+License. This repository retains that license in [LICENSE](LICENSE).
 
 ## Learn more
 

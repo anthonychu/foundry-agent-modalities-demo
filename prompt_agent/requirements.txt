@@ -1,2 +1,2 @@
-azure-ai-projects>=2.3.0
-azure-identity
+azure-ai-projects==2.5.0
+azure-identity==1.25.3

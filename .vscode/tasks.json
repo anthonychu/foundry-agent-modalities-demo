@@ -15,10 +15,10 @@
     {
       "label": "Run Agent/Workflow HTTP Server",
       "type": "shell",
-      "command": "\"${workspaceFolder}/hosted_agent/.venv/bin/python\" -m debugpy --listen 127.0.0.1:5679 \"${workspaceFolder}/hosted_agent/main.py\"",
+      "command": "\"${workspaceFolder}/deployment/src/agent-framework-agent-with-local-tools-responses/.venv/bin/python\" -m debugpy --listen 127.0.0.1:5679 \"${workspaceFolder}/deployment/src/agent-framework-agent-with-local-tools-responses/main.py\"",
       "isBackground": true,
       "options": {
-        "cwd": "${workspaceFolder}/hosted_agent"
+        "cwd": "${workspaceFolder}/deployment/src/agent-framework-agent-with-local-tools-responses"
       },
       "dependsOn": [
         "Validate prerequisites"
@@ -53,10 +53,10 @@
     {
       "label": "Run Agent/Workflow in Terminal",
       "type": "shell",
-      "command": "\"${workspaceFolder}/hosted_agent/.venv/bin/python\" -m debugpy --listen 127.0.0.1:5679 \"${workspaceFolder}/hosted_agent/main.py\"",
+      "command": "\"${workspaceFolder}/deployment/src/agent-framework-agent-with-local-tools-responses/.venv/bin/python\" -m debugpy --listen 127.0.0.1:5679 \"${workspaceFolder}/deployment/src/agent-framework-agent-with-local-tools-responses/main.py\"",
       "isBackground": true,
       "options": {
-        "cwd": "${workspaceFolder}/hosted_agent"
+        "cwd": "${workspaceFolder}/deployment/src/agent-framework-agent-with-local-tools-responses"
       },
       "problemMatcher": {
         "pattern": [
