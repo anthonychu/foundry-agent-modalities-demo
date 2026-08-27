@@ -1,0 +1,11 @@
+.DS_Store
+.env
+.azure/
+.foundry/
+.venv/
+**/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/

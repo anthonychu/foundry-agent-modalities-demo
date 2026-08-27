@@ -1,0 +1,8 @@
+name: smoke-core
+agent:
+    name: field-demo-support-triage-hosted
+    kind: hosted
+    config: .agent_configs/baseline/metadata.yaml
+options:
+    eval_model: gpt-5.6-sol
+max_samples: 15

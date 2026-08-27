@@ -1,0 +1,8 @@
+{
+  "customer": "Contoso Retail",
+  "annual_contract_usd": 240000,
+  "outage_minutes": 95,
+  "regulated_regions": 2,
+  "renewal_days": 21,
+  "request": "Summarize the priority, reason codes, first response, and next three actions."
+}

@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+requiredVersions:
+    extensions:
+        azure.ai.agents: '>=1.0.0-beta.12'
+name: field-demo-support-triage
+services:
+    ai-project:
+        host: azure.ai.project
+        deployments: [{ name: gpt-5.6-sol, model: { format: OpenAI, name: gpt-5.6-sol, version: '2026-07-09' }, sku: { name: GlobalStandard, capacity: 10 } }]
+    field-demo-support-triage-hosted:
+        host: azure.ai.agent
+        metadata:
+            tags:
+                - Agent Framework
+                - Field Enablement Demo
+                - Local Tools
+                - Responses Protocol
+        project: src/agent-framework-agent-with-local-tools-responses
+        language: python
+        codeConfiguration:
+            runtime: python_3_13
+            entryPoint: main.py
+        uses:
+            - ai-project
+        kind: hosted
+        name: field-demo-support-triage-hosted
+        description: Demonstrates customer-owned, deterministic support-priority code in a Foundry Hosted Agent.
+        protocols: [{ protocol: responses, version: 2.0.0 }]
+        environmentVariables: [{ name: AZURE_AI_MODEL_DEPLOYMENT_NAME, value: '${AZURE_AI_MODEL_DEPLOYMENT_NAME}' }]
+        container:
+            resources:
+                cpu: '0.5'
+                memory: 1Gi
+infra:
+    provider: microsoft.foundry

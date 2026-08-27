@@ -1,0 +1,101 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Validate prerequisites",
+      "type": "aitk",
+      "command": "debug-check-prerequisites",
+      "args": {
+        "portOccupancy": [
+          5679,
+          8088
+        ]
+      }
+    },
+    {
+      "label": "Run Agent/Workflow HTTP Server",
+      "type": "shell",
+      "command": "\"${workspaceFolder}/hosted_agent/.venv/bin/python\" -m debugpy --listen 127.0.0.1:5679 \"${workspaceFolder}/hosted_agent/main.py\"",
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}/hosted_agent"
+      },
+      "dependsOn": [
+        "Validate prerequisites"
+      ],
+      "problemMatcher": {
+        "pattern": [
+          {
+            "regexp": "^.*$",
+            "file": 0,
+            "location": 1,
+            "message": 2
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Application startup complete|[Rr]unning on|Started server process"
+        }
+      }
+    },
+    {
+      "label": "Open Agent Inspector",
+      "type": "shell",
+      "command": "echo '${input:openAgentInspector}'",
+      "presentation": {
+        "reveal": "never"
+      },
+      "dependsOn": [
+        "Run Agent/Workflow HTTP Server"
+      ]
+    },
+    {
+      "label": "Run Agent/Workflow in Terminal",
+      "type": "shell",
+      "command": "\"${workspaceFolder}/hosted_agent/.venv/bin/python\" -m debugpy --listen 127.0.0.1:5679 \"${workspaceFolder}/hosted_agent/main.py\"",
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}/hosted_agent"
+      },
+      "problemMatcher": {
+        "pattern": [
+          {
+            "regexp": "^.*$",
+            "file": 0,
+            "location": 1,
+            "message": 2
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Application startup complete|[Rr]unning on|Started server process"
+        }
+      }
+    },
+    {
+      "label": "Terminate All Tasks",
+      "command": "echo ${input:terminate}",
+      "type": "shell",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "openAgentInspector",
+      "type": "command",
+      "command": "ai-mlstudio.openTestTool",
+      "args": {
+        "triggeredFrom": "tasks",
+        "port": 8088
+      }
+    },
+    {
+      "id": "terminate",
+      "type": "command",
+      "command": "workbench.action.tasks.terminate",
+      "args": "terminateAll"
+    }
+  ]
+}
