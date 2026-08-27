@@ -1,20 +1,28 @@
 # Compare Prompt Agents and Hosted Agents
 
-This demo uses one fictional customer-support case to explain the two agent types in Microsoft
-Foundry Agent Service:
+This demo compares two implementations of a support-triage agent in Microsoft Foundry Agent Service.
+The agent reads customer and incident facts, applies four scoring rules, assigns a support priority,
+drafts a first response, and recommends three next actions:
 
-- A **Prompt Agent** keeps the triage policy in agent instructions. Microsoft Foundry runs the agent
-  harness, so there is no agent application to deploy or maintain.
+- A **Prompt Agent** keeps the triage policy in agent instructions. Microsoft Foundry runs the
+  software loop that coordinates the model and tools, so there is no agent application to deploy or
+  maintain.
 - A **Hosted Agent** keeps the same triage policy in Python code. You own the code and its
   dependencies; Microsoft Foundry deploys, hosts, scales, and exposes it through a managed endpoint.
 
+The **priority policy**—also called a *scoring rubric* in some source files—awards points for a long
+outage, strategic contract, regulated-region impact, and near-term renewal. Short **reason codes**
+identify which rules contributed to the result. The values and thresholds are fictional, but the
+design choice is realistic.
+
 The demo helps a customer answer one question:
 
-> **Do we need to own and change the agent's runtime logic, or do we want Foundry to operate it for
-> us?**
+> **Do we need to own and change the code that controls this decision, or do we want Foundry to
+> operate the agent from configuration?**
 
-Both agents receive the same input and return the same priority. The difference is where the policy
-lives and who is responsible for it.
+Both agents receive the same input and return the same priority. The Prompt Agent keeps the policy in
+instructions; the Hosted Agent calls customer-owned Python code. The difference is ownership, not
+which response sounds better.
 
 ## What you will show
 
@@ -42,7 +50,9 @@ Both paths should return:
 - score `8`; and
 - reason codes `OUTAGE_60`, `STRATEGIC_CONTRACT`, `REGULATED_IMPACT`, and `RENEWAL_30`.
 
-The values and thresholds are fictional. They are not Microsoft support policy.
+The score comes from four rules: three points for a 60-minute outage, two for a $200,000 contract,
+two for regulated-region impact, and one for a renewal within 30 days. The values and thresholds are
+not Microsoft support policy.
 
 ## Before you begin
 
@@ -73,7 +83,7 @@ azd extension install azure.ai.agents --source azd
 cd ~/source/demos/foundry-agent-modalities
 ```
 
-### 2. Check the local policy code
+### 2. Optional but recommended: check the local policy code
 
 The Hosted Agent uses a small Python function to calculate priority. Run its automated checks before
 creating cloud resources:
@@ -82,10 +92,10 @@ creating cloud resources:
 python3 -m unittest discover -s hosted_agent/tests -v
 ```
 
-Why this check exists: the Hosted path is useful when a business rule must be deterministic,
-versioned, and independently testable. The check confirms that the rule returns the expected score
-without relying on a model. It is preparation evidence; it does not need to be part of a normal
-customer presentation.
+Why this check exists: the Hosted path is useful when a business rule must return the same result for
+the same input, be versioned, and be independently testable. The check confirms that the rule returns
+the expected score without relying on a model. It is preparation evidence; it does not need to be
+part of a normal customer presentation.
 
 ### 3. Create an azd environment
 
@@ -156,6 +166,9 @@ This command:
 4. preserves the version so it can be shown in the Foundry portal.
 
 Expect `P0`, score `8`, and the four reason codes listed earlier.
+
+Run `create_and_run.py` once during setup. For future presentations, use `prompt_agent/invoke.py`,
+which invokes the existing Prompt Agent without creating another version.
 
 ### 8. Install the Hosted Agent dependencies
 
@@ -319,6 +332,7 @@ the two source files, the last validated output, and the exact failure category.
 foundry-agent-modalities/
 ├── README.md                 # Setup, run, and cleanup quickstart
 ├── CUSTOMER_DEMO.md          # Seven-minute customer presentation script
+├── VALIDATED_OUTPUT.md       # Known-good fallback output for an offline presentation
 ├── sample_case.json          # Fictional input shared by both paths
 ├── scripts/
 │   ├── configure-local-env.sh

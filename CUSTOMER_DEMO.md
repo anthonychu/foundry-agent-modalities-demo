@@ -1,21 +1,81 @@
 # Present the Prompt Agents and Hosted Agents demo
 
 Use this guide after completing the setup in the main README. The presentation takes about seven
-minutes and uses the same fictional support case in both agent types.
+minutes and compares two ways to build the same support-triage agent in Microsoft Foundry.
+
+## Demo overview
+
+The agent acts as the first responder for an incoming production-support case. It receives a few
+facts about the customer and incident, then it:
+
+1. evaluates the case against a priority policy;
+2. assigns a priority and explains which rules were triggered;
+3. drafts a short first response to the customer; and
+4. recommends the next three actions for the support team.
+
+The **priority policy** is a simple set of four scoring rules. It is also called a *scoring rubric*
+in some source files and agent output. For this demo, both terms mean the same thing:
+
+| Case condition | Points | Reason code |
+| --- | ---: | --- |
+| Production outage is at least 60 minutes | 3 | `OUTAGE_60` |
+| Annual contract is at least $200,000 | 2 | `STRATEGIC_CONTRACT` |
+| One or more regulated regions are affected | 2 | `REGULATED_IMPACT` |
+| Renewal is within 30 days | 1 | `RENEWAL_30` |
+
+The points are added together. A score of 7 or more is P0, 4-6 is P1, 2-3 is P2, and 0-1 is P3.
+The **reason codes** are short labels that show exactly which conditions contributed to the score.
+
+The sample Contoso Retail case triggers all four rules, for a score of 8 and priority P0. The values,
+thresholds, and response process are fictional and are used only to make the agent behavior easy to
+follow.
+
+These are the four fields the scoring policy evaluates:
+
+| Input from the case | Demo value |
+| --- | ---: |
+| Annual contract value | $240,000 |
+| Production outage duration | 95 minutes |
+| Regulated regions affected | 2 |
+| Days until renewal | 21 |
+
+The customer name and requested output are additional context, but they do not add points.
+
+The two agents perform that same job differently:
+
+- In the **Prompt Agent**, the four scoring rules are written in the agent instructions. Foundry
+  operates the software loop that sends context to the model, handles any tools, and continues until
+  the agent returns a response.
+- In the **Hosted Agent**, the four scoring rules are implemented as a Python function. The model is
+  instructed to call that function before drafting its response. The customer owns this application
+  code, while Foundry operates the managed hosting platform around it.
+
+That software loop is sometimes called the **agent harness**. The point of the demo is to make the
+ownership choice concrete: should the scoring policy remain managed agent configuration, or does the
+customer need to own it as application code?
 
 ## What the customer should understand
 
 By the end of the demo, the customer should be able to say:
 
-- “Prompt Agents let Foundry operate the harness while I configure the agent.”
+- “Prompt Agents let Foundry operate the agent loop while I configure the agent.”
 - “Hosted Agents let me own the runtime code while Foundry manages the hosting platform.”
 - “I should choose based on the control I need, not by counting features.”
 
-Do not position one path as universally better. Both are production agent types in Microsoft Foundry.
+Do not position one path as universally better. Both are production agent types in Microsoft
+Foundry, and both should reach the same P0 decision in this demo.
 
 ## Prepare before the meeting
 
-From the demo repository root:
+Complete the setup in the main README first. In particular, run `create_and_run.py` once to create the
+Prompt Agent, then complete the separate Hosted Agent deployment step. During later presentations,
+`invoke.py` calls the existing Prompt Agent; it does not create another version.
+
+Before presenting for the first time, read the **If a live call fails** section near the end of this
+guide and keep `VALIDATED_OUTPUT.md` open as the fallback.
+
+Start from the demo repository root. The customer presentation needs one terminal. Every command
+below either runs from the root or returns there with `cd ..` before the next step.
 
 ### 1. Confirm the agents are available
 
@@ -28,15 +88,23 @@ AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent show \
 cd ..
 ```
 
-The diagnostic result should have no failed checks, and the Hosted Agent status should be `active`.
+The first command checks the local configuration, authentication, project access, and deployed agent.
+It should report no failed checks. The second command reads the deployed Hosted Agent directly; its
+`status` should be `active`, which means it is ready to receive requests.
 
-### 2. Run the complete demo once
+### 2. Run a preflight before each customer meeting
+
+From the repository root:
 
 ```bash
 bash scripts/run-customer-demo.sh
 ```
 
 Confirm that both paths return `P0`, score `8`, and the same four reason codes.
+
+This script is safe to run before every presentation: it invokes the existing Prompt and Hosted
+Agents and does not create new agent versions. It does create fresh Hosted session/conversation
+state and makes billable model calls.
 
 ### 3. Arrange the windows
 
@@ -47,55 +115,68 @@ Open these files side by side in VS Code:
 3. `deployment/src/agent-framework-agent-with-local-tools-responses/priority_rules.py`
 4. `deployment/src/agent-framework-agent-with-local-tools-responses/main.py`
 
-Keep a terminal open at the repository root. Increase the editor and terminal font size before
-sharing the screen.
+Keep one terminal open at the repository root; no second terminal or local server is needed for the
+customer presentation. Increase the editor and terminal font size before sharing the screen. The
+priority-rules file shows the scoring calculation. The main file shows how that calculation is
+registered as a tool the Hosted Agent must call.
 
 ## Seven-minute presentation
 
-### 0:00-0:45 — Introduce the decision
+### 0:00-1:15 — Set up the scenario and decision
 
-Show `sample_case.json`.
+Show `sample_case.json`. Highlight the four scored fields: contract value, outage duration,
+regulated-region count, and renewal timing. The `request` field tells the agent what response to
+produce after it assigns priority.
 
 Suggested language:
 
-> “Foundry has two agent types: Prompt Agents and Hosted Agents. I will send the same fictional
-> support case through both. I am not comparing which one writes a nicer answer. I am showing where
-> the business rule lives and who owns it.”
+> “Imagine a support team wants an agent to triage new production incidents. The agent reads the
+> outage duration, contract value, regulated-region impact, and renewal timing. It applies four
+> scoring rules, assigns a priority, drafts the first customer response, and recommends three next
+> actions. This case triggers every rule, so we expect P0 with a score of 8. I will run that same job
+> as a Prompt Agent and as a Hosted Agent. The comparison is not about which one writes a nicer
+> paragraph. It is about where the scoring policy lives and who owns it.”
 
-Briefly read the case fields. Tell the audience that the expected result is P0 with a score of 8.
+Briefly show the four case fields. Explain that a reason code names each rule that contributed to the
+score. The audience now knows what the agent will do before seeing either implementation.
 
-### 0:45-2:30 — Show the Prompt Agent
+### 1:15-3:00 — Show the Prompt Agent
 
 Open `prompt_agent/instructions.md`.
 
-Point out:
+Explain what the audience is seeing:
 
-- the model, instructions, and tools define the agent;
-- the priority rubric is readable configuration; and
+- Prompt Agents are defined by a model, instructions, and optional tools;
+- in this demo, the instructions describe both the agent's job and the four scoring rules;
+- the model follows those rules and writes the customer-facing response; and
 - there is no customer-owned agent application or container.
 
 Suggested language:
 
-> “In the Prompt Agent path, the policy is in the instructions. I can create and version the agent
-> through the portal, SDK, or REST, but Foundry operates the harness and runtime.”
+> “In the Prompt Agent path, the priority policy is part of the instructions. I can create and
+> version the agent through the portal, SDK, or REST, but Foundry operates the agent loop and
+> runtime. This is the simpler choice when configuration and supported tools are enough.”
 
 Invoke only the Prompt Agent:
+
+From the repository root:
 
 ```bash
 prompt_agent/.venv/bin/python prompt_agent/invoke.py
 ```
 
-Call out the priority, score, reason codes, first response, and three actions. Do not spend time
-comparing prose word by word.
+Call out the P0 priority, score of 8, the four triggered reason codes, first response, and three
+actions. Connect each reason code back to the table in the introduction. Do not spend time comparing
+prose word by word.
 
-### 2:30-4:45 — Show the Hosted Agent
+### 3:00-5:00 — Show the Hosted Agent
 
 Open `deployment/src/agent-framework-agent-with-local-tools-responses/priority_rules.py`.
 
-Point out:
+Explain what changed:
 
 - the rule is a normal Python function;
-- the score and thresholds are deterministic; and
+- the same case always produces the same score because the calculation is code, not model judgment;
 - the code can be reviewed, versioned, tested, and released with the application.
 
 Then open `deployment/src/agent-framework-agent-with-local-tools-responses/main.py` and show where
@@ -103,11 +184,14 @@ Then open `deployment/src/agent-framework-agent-with-local-tools-responses/main.
 
 Suggested language:
 
-> “In the Hosted Agent path, we own this policy as code. The model must call the function before it
-> assigns priority. Foundry still gives us a managed deployment, endpoint, identity, scaling, and
-> session infrastructure, but we own the application logic and dependencies.”
+> “In the Hosted Agent path, we own the priority policy as code. The model must call this function
+> before it assigns priority, then it uses the result to draft the response and actions. Foundry
+> still gives us a managed deployment, endpoint, identity, scaling, and session infrastructure, but
+> we own the application logic and dependencies.”
 
 Invoke the deployed Hosted Agent:
+
+From the repository root:
 
 ```bash
 cd deployment
@@ -119,10 +203,13 @@ AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent invoke \
 cd ..
 ```
 
-Again, call out the priority, score, and reason codes. Explain that the important difference is the
-customer-owned function, not the generated wording.
+`--new-session` gives this run a fresh Hosted workspace. `--new-conversation` starts without earlier
+chat history. Together they keep the customer presentation independent from previous test runs.
 
-### 4:45-6:15 — Compare responsibilities
+Again, call out P0, score 8, and the four reason codes. Explain that the calculation came from the
+customer-owned function. The generated wording can vary; the function result does not.
+
+### 5:00-6:15 — Compare responsibilities
 
 Use this summary:
 
@@ -132,20 +219,21 @@ Use this summary:
 | Who owns the agent-loop implementation? | Microsoft Foundry | Customer |
 | Who operates the hosting platform? | Microsoft Foundry | Microsoft Foundry |
 | Does the customer maintain runtime code? | No | Yes |
-| Can the policy be a deterministic in-process function? | Use supported tools/integration patterns | Yes |
+| Can the priority policy run as customer-owned code inside the agent? | No; connect customer code through a supported external tool | Yes |
 | Are endpoint and scaling managed? | Yes | Yes |
 
 Suggested language:
 
 > “Choose Prompt when instructions and supported tools are enough and you want Foundry to operate
-> the loop. Choose Hosted when your requirement is to own and change the code, framework,
-> dependencies, protocols, or runtime behavior.”
+> the agent loop. Choose Hosted when you need to own and change the code, framework, dependencies,
+> protocols, or runtime behavior. In this example, the deciding question is whether the priority
+> policy must be governed and released as customer-owned software.”
 
 ### 6:15-7:00 — Ask the customer
 
 Close with these questions:
 
-1. Which parts of your agent must be deterministic business code?
+1. Which decisions in your agent must always follow customer-owned code rather than model instructions?
 2. Do you need a specific framework, protocol, or dependency?
 3. Do you want to operate that runtime logic, or would you prefer Foundry to operate it?
 
@@ -171,11 +259,12 @@ Skip this step for an executive or product audience.
 
 Keep the comparison intact:
 
-1. Show `prompt_agent/instructions.md` and the last validated Prompt output.
-2. Show `priority_rules.py`, then run the local automated checks.
-3. Show the last validated Hosted output or the Hosted Agent in the portal.
-4. State the exact failure category: authentication, model quota, deployment, session startup, tool
-   call, or network access.
+1. Open `VALIDATED_OUTPUT.md`, which contains a known-good output from each path.
+2. Show `prompt_agent/instructions.md` and explain how the Prompt Agent reaches the priority.
+3. Show `priority_rules.py`, then run the local automated checks.
+4. Show the Hosted Agent in the portal if it remains reachable.
+5. State the exact failure category: authentication, model quota, deployment, session startup, tool
+  call, or network access.
 
 Do not replace it with an unrelated canned agent and imply that it validates this comparison.
 
