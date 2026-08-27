@@ -24,6 +24,17 @@ Both agents receive the same input and return the same priority. The Prompt Agen
 instructions; the Hosted Agent calls customer-owned Python code. The difference is ownership, not
 which response sounds better.
 
+The portal supports both paths, with an important distinction:
+
+- **Prompt Agent:** create, configure, edit, version, and test the agent in the Foundry portal—or
+  define it through SDK/REST for an automated workflow.
+- **Hosted Agent:** build and edit the application in code, deploy it to Foundry, then use the portal
+  playground to invoke, trace, evaluate, monitor, and publish the deployed agent. Hosted code is not
+  edited in the agent-building UI.
+
+This repository creates the Prompt Agent with code so setup is repeatable. That is a demo choice,
+not a Prompt Agent limitation.
+
 ## What you will show
 
 ```text
@@ -167,8 +178,15 @@ This command:
 
 Expect `P0`, score `8`, and the four reason codes listed earlier.
 
-Run `create_and_run.py` once during setup. For future presentations, use `prompt_agent/invoke.py`,
-which invokes the existing Prompt Agent without creating another version.
+Run `create_and_run.py` once during setup. Do not rerun it before later presentations. Use
+`prompt_agent/invoke.py` when you want to check only the existing Prompt Agent, or use
+`scripts/run-customer-demo.sh` for the normal paired Prompt-and-Hosted preflight. Neither command
+creates another agent version.
+
+You can now open **Build → Agents** in the Foundry portal and select
+`field-demo-support-triage-prompt`. The playground shows the editable model, instructions, tools,
+knowledge, memory, and guardrails beside the chat experience. Do not make a change yet; the customer
+demo uses the validated version.
 
 ### 8. Install the Hosted Agent dependencies
 
@@ -230,10 +248,19 @@ AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent show \
   --output json
 ```
 
-Then run the same case against both deployed paths:
+Print the direct portal links for both agents:
 
 ```bash
 cd ..
+bash scripts/show-portal-links.sh
+```
+
+Open both links. The Prompt Agent page is an authoring and testing surface. The Hosted Agent page is
+a testing and operations surface for code that was deployed from this repository.
+
+Finally, run the same case against both deployed paths as a preflight:
+
+```bash
 bash scripts/run-customer-demo.sh
 ```
 
@@ -245,15 +272,18 @@ create another agent version.
 Use [CUSTOMER_DEMO.md](CUSTOMER_DEMO.md) for the exact presentation sequence and suggested language.
 It is designed for a seven-minute customer conversation and includes a fallback if a live call fails.
 
+The recommended presentation is **portal-first**:
+
 At a high level:
 
 1. Show the single customer scenario in `sample_case.json`.
-2. Open `prompt_agent/instructions.md` and explain that the Prompt Agent policy is configuration.
-3. Invoke the Prompt Agent.
-4. Open `deployment/src/agent-framework-agent-with-local-tools-responses/priority_rules.py` and
+2. Open the Prompt Agent in the Foundry portal. Show that its model, instructions, tools, knowledge,
+  memory, and guardrails are configurable there, then test it in the playground.
+3. Open `deployment/src/agent-framework-agent-with-local-tools-responses/priority_rules.py` and
    explain that the Hosted Agent policy is customer-owned code.
-5. Invoke the Hosted Agent.
-6. Close by asking whether the customer needs to own the runtime rule.
+4. Open the Hosted Agent in the Foundry portal. Explain that its code is edited and deployed outside
+  the portal, then test it in the playground and show its logs/traces/monitoring surfaces.
+5. Close by asking whether the customer needs to own the runtime rule.
 
 Do not present the demo as a quality contest. Both paths are expected to reach the same decision.
 
@@ -336,7 +366,8 @@ foundry-agent-modalities/
 ├── sample_case.json          # Fictional input shared by both paths
 ├── scripts/
 │   ├── configure-local-env.sh
-│   └── run-customer-demo.sh
+│   ├── run-customer-demo.sh
+│   └── show-portal-links.sh
 ├── prompt_agent/
 │   ├── instructions.md       # Policy expressed as Prompt Agent configuration
 │   ├── create_and_run.py     # One-time create and validation
@@ -353,6 +384,8 @@ foundry-agent-modalities/
 ## Learn more
 
 - <https://learn.microsoft.com/azure/foundry/agents/overview>
+- <https://learn.microsoft.com/azure/foundry/agents/concepts/development-lifecycle>
+- <https://learn.microsoft.com/azure/foundry/concepts/concept-playgrounds>
 - <https://learn.microsoft.com/azure/foundry/agents/quickstarts/prompt-agent>
 - <https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent>
 - <https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents>

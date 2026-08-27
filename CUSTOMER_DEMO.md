@@ -54,12 +54,26 @@ That software loop is sometimes called the **agent harness**. The point of the d
 ownership choice concrete: should the scoring policy remain managed agent configuration, or does the
 customer need to own it as application code?
 
+The Foundry portal is valuable in both paths, but it plays a different role:
+
+| Portal experience | Prompt Agent | Hosted Agent |
+| --- | --- | --- |
+| Create the agent | Create directly in the portal, or use SDK/REST | Build in code, then deploy to Foundry |
+| Change agent behavior | Edit model, instructions, tools, knowledge, memory, and guardrails in the agent-building UI | Change the source code and deploy a new version; Hosted code is not edited in the agent-building UI |
+| Try the agent | Chat in the Agents playground | Chat with the deployed agent in the Agents playground |
+| Improve and operate | Save versions, inspect traces, evaluate, monitor, and publish | Inspect details and logs, trace, evaluate, monitor, optimize, and publish |
+
+This is an important part of the comparison. **Prompt Agents offer a portal-first authoring path as
+well as SDK and REST. Hosted Agents offer code-first authoring plus a managed portal experience for
+testing and operations after deployment.**
+
 ## What the customer should understand
 
 By the end of the demo, the customer should be able to say:
 
 - “Prompt Agents let Foundry operate the agent loop while I configure the agent.”
 - “Hosted Agents let me own the runtime code while Foundry manages the hosting platform.”
+- “I can test and operate both from the Foundry portal, but I edit only the Prompt Agent there.”
 - “I should choose based on the control I need, not by counting features.”
 
 Do not position one path as universally better. Both are production agent types in Microsoft
@@ -104,16 +118,38 @@ Confirm that both paths return `P0`, score `8`, and the same four reason codes.
 
 This script is safe to run before every presentation: it invokes the existing Prompt and Hosted
 Agents and does not create new agent versions. It does create fresh Hosted session/conversation
-state and makes billable model calls.
+state and makes billable model calls. Use `prompt_agent/invoke.py` only when troubleshooting or
+checking the Prompt Agent by itself; it is not a replacement for the paired preflight.
 
-### 3. Arrange the windows
+### 3. Open both agents in the Foundry portal
 
-Open these files side by side in VS Code:
+From the repository root, print the prepared portal links:
 
-1. `sample_case.json`
-2. `prompt_agent/instructions.md`
-3. `deployment/src/agent-framework-agent-with-local-tools-responses/priority_rules.py`
-4. `deployment/src/agent-framework-agent-with-local-tools-responses/main.py`
+```bash
+bash scripts/show-portal-links.sh
+```
+
+Open both links in separate browser tabs. Confirm:
+
+- the Prompt Agent page shows an editable model, instructions, tools, knowledge, memory, and
+  guardrails beside the playground; select the top-level **Playground** tab and its inner **Chat**
+  tab; and
+- the Hosted Agent page shows the deployed version, code asset, protocols, Chat playground, log
+  stream, traces, monitor, and evaluation surfaces; select the top-level **Playground** tab and its
+  inner **Chat** tab.
+
+Do not edit or save anything during the customer presentation. The existing versions are already
+validated.
+
+### 4. Arrange the windows
+
+Prepare these tabs in presentation order:
+
+1. VS Code: `sample_case.json`
+2. Browser: the Prompt Agent playground
+3. VS Code: `deployment/src/agent-framework-agent-with-local-tools-responses/priority_rules.py`
+4. VS Code: `deployment/src/agent-framework-agent-with-local-tools-responses/main.py`
+5. Browser: the Hosted Agent playground
 
 Keep one terminal open at the repository root; no second terminal or local server is needed for the
 customer presentation. Increase the editor and terminal font size before sharing the screen. The
@@ -140,36 +176,41 @@ Suggested language:
 Briefly show the four case fields. Explain that a reason code names each rule that contributed to the
 score. The audience now knows what the agent will do before seeing either implementation.
 
-### 1:15-3:00 — Show the Prompt Agent
+### 1:15-3:00 — Create, configure, and test a Prompt Agent in the portal
 
-Open `prompt_agent/instructions.md`.
+Switch to the Prompt Agent playground in the Foundry portal.
 
 Explain what the audience is seeing:
 
-- Prompt Agents are defined by a model, instructions, and optional tools;
-- in this demo, the instructions describe both the agent's job and the four scoring rules;
-- the model follows those rules and writes the customer-facing response; and
-- there is no customer-owned agent application or container.
+- a Prompt Agent can be created directly in this portal or through SDK/REST;
+- the left pane configures the model, instructions, tools, knowledge, memory, and guardrails;
+- saving a change creates a version that can be tested and compared;
+- the right pane is the playground for multi-turn chat, metrics, and validation; and
+- there is no customer-owned agent application or container to maintain.
+
+Expand **Instructions** and point to the four scoring rules. Point to **Tools**, **Knowledge**, and
+**Memory** without changing them. Mention that this demo was created with the SDK only so setup is
+repeatable; the same agent definition is visible and editable here.
 
 Suggested language:
 
-> “In the Prompt Agent path, the priority policy is part of the instructions. I can create and
-> version the agent through the portal, SDK, or REST, but Foundry operates the agent loop and
-> runtime. This is the simpler choice when configuration and supported tools are enough.”
+> “Prompt Agents support both portal-first and code-first development. Here I can choose the model,
+> edit the instructions, attach tools and knowledge, save versions, and test the agent without
+> building an application runtime. We used the SDK to create this demo repeatably, but I could have
+> created the same agent here. Foundry operates the agent loop and runtime.”
 
-Invoke only the Prompt Agent:
+In the top-level **Playground** tab, select the inner **Chat** tab, start a new chat, and paste:
 
-From the repository root:
-
-```bash
-prompt_agent/.venv/bin/python prompt_agent/invoke.py
+```text
+Triage this support case. Customer: Contoso Retail. Annual contract: $240,000. Production outage: 95 minutes. Regulated regions affected: 2. Renewal in: 21 days. Summarize the priority, reason codes, first response, and next three actions.
 ```
 
 Call out the P0 priority, score of 8, the four triggered reason codes, first response, and three
 actions. Connect each reason code back to the table in the introduction. Do not spend time comparing
-prose word by word.
+prose word by word. If time allows, point out the **Traces**, **Monitor**, and **Evaluation** tabs as
+the path from rapid portal prototyping to managed operation.
 
-### 3:00-5:00 — Show the Hosted Agent
+### 3:00-5:15 — Show code-first authoring and portal-based testing for a Hosted Agent
 
 Open `deployment/src/agent-framework-agent-with-local-tools-responses/priority_rules.py`.
 
@@ -189,27 +230,28 @@ Suggested language:
 > still gives us a managed deployment, endpoint, identity, scaling, and session infrastructure, but
 > we own the application logic and dependencies.”
 
-Invoke the deployed Hosted Agent:
+Switch to the Hosted Agent playground in the browser. Point out:
 
-From the repository root:
+- the deployed version and running status;
+- **Code asset** and **Protocols**, which describe what was deployed rather than offering a portal
+  code editor;
+- the same **Chat** playground used to invoke the deployed agent;
+- the live log stream for customer-owned runtime code; and
+- the **Details**, **Traces**, **Monitor**, **Evaluation**, and **Publish** surfaces.
 
-```bash
-cd deployment
-AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent invoke \
-  field-demo-support-triage-hosted \
-  --new-session \
-  --new-conversation \
-  'Triage this support case. Customer: Contoso Retail. Annual contract: $240,000. Production outage: 95 minutes. Regulated regions affected: 2. Renewal in: 21 days. Summarize the priority, reason codes, first response, and next three actions.'
-cd ..
-```
+Suggested transition:
 
-`--new-session` gives this run a fresh Hosted workspace. `--new-conversation` starts without earlier
-chat history. Together they keep the customer presentation independent from previous test runs.
+> “The Hosted Agent is built and changed in code, not in this setup pane. After deployment, it still
+> participates in the Foundry lifecycle: I can test it in the playground, inspect logs and traces,
+> evaluate it, monitor it, and publish it from the managed portal experience.”
+
+In the top-level **Playground** tab, select the inner **Chat** tab, start a new chat, and paste the
+same support case.
 
 Again, call out P0, score 8, and the four reason codes. Explain that the calculation came from the
 customer-owned function. The generated wording can vary; the function result does not.
 
-### 5:00-6:15 — Compare responsibilities
+### 5:15-6:15 — Compare responsibilities
 
 Use this summary:
 
@@ -221,6 +263,8 @@ Use this summary:
 | Does the customer maintain runtime code? | No | Yes |
 | Can the priority policy run as customer-owned code inside the agent? | No; connect customer code through a supported external tool | Yes |
 | Are endpoint and scaling managed? | Yes | Yes |
+| Can it be tested in the Foundry playground? | Yes | Yes, after deployment |
+| Can its behavior be edited in the agent-building UI? | Yes | No; edit code and deploy a new version |
 
 Suggested language:
 
@@ -254,6 +298,18 @@ Explain it in plain language:
 > reason to choose Hosted when deterministic policy code and software release controls matter.”
 
 Skip this step for an executive or product audience.
+
+## Command-line alternative
+
+If the portal is unavailable or the audience wants an API/automation view, run both existing agents
+from the repository root:
+
+```bash
+bash scripts/run-customer-demo.sh
+```
+
+The helper starts fresh Hosted session and conversation state, invokes the existing Prompt Agent,
+and invokes the deployed Hosted Agent with the same case. It does not create new agent versions.
 
 ## If a live call fails
 
