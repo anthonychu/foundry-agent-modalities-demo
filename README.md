@@ -107,7 +107,7 @@ azd extension install azure.ai.agents --source azd
 Clone or download this repository, then change to its root folder:
 
 ```bash
-cd foundry-agent-modalities
+cd foundry-agent-modalities-demo
 ```
 
 ### 2. Optional but recommended: check the local policy code
@@ -234,7 +234,7 @@ open.
 In a second terminal, run:
 
 ```bash
-cd foundry-agent-modalities/deployment
+cd foundry-agent-modalities-demo/deployment
 AZURE_DEV_USER_AGENT=microsoft_foundry_skill azd ai agent invoke \
   field-demo-support-triage-hosted \
   --local \
