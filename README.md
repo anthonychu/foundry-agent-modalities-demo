@@ -33,7 +33,7 @@ The portal supports both paths, with an important distinction:
 - **Prompt Agent:** create, configure, edit, version, and test the agent in the Foundry portal—or
   define it through SDK/REST for an automated workflow.
 - **Hosted Agent:** build and edit the application in code, deploy it to Foundry, then use the portal
-  playground to invoke, trace, evaluate, monitor, and publish the deployed agent. Hosted code is not
+  playground to invoke, trace, evaluate, monitor, and optimize the deployed agent. Hosted code is not
   edited in the agent-building UI.
 
 This repository creates the Prompt Agent with code so setup is repeatable. That is a demo choice,
@@ -94,6 +94,16 @@ Install the current Foundry Agent extension:
 
 ```bash
 azd extension install azure.ai.agents --source azd
+azd version
+azd extension list
+```
+
+Confirm that `azd` is version 1.32 or later and that `azure.ai.agents` is version
+`1.0.0-beta.13` or later. If the extension is already installed from another registered source,
+replace it explicitly with the public `azd` build:
+
+```bash
+azd extension install azure.ai.agents --source azd --force
 ```
 
 > **Cost notice:** Setup creates a Foundry project, model deployment, Prompt Agent, and Hosted Agent.

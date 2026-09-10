@@ -61,7 +61,7 @@ The Foundry portal is valuable in both paths, but it plays a different role:
 | Create the agent | Create directly in the portal, or use SDK/REST | Build in code, then deploy to Foundry |
 | Change agent behavior | Edit model, instructions, tools, knowledge, memory, and guardrails in the agent-building UI | Change the source code and deploy a new version; Hosted code is not edited in the agent-building UI |
 | Try the agent | Chat in the Agents playground | Chat with the deployed agent in the Agents playground |
-| Improve and operate | Save versions, inspect traces, evaluate, monitor, and publish | Inspect details and logs, trace, evaluate, monitor, optimize, and publish |
+| Improve and operate | Save versions, inspect traces, evaluate, monitor, and optimize | Inspect details and logs, trace, evaluate, monitor, and optimize |
 
 This is an important part of the comparison. **Prompt Agents offer a portal-first authoring path as
 well as SDK and REST. Hosted Agents offer code-first authoring plus a managed portal experience for
@@ -185,7 +185,7 @@ Explain what the audience is seeing:
 - a Prompt Agent can be created directly in this portal or through SDK/REST;
 - the left pane configures the model, instructions, tools, knowledge, memory, and guardrails;
 - saving a change creates a version that can be tested and compared;
-- the right pane is the playground for multi-turn chat, metrics, and validation; and
+- the right pane is the playground for multi-turn chat, metrics, and request configuration; and
 - there is no customer-owned agent application or container to maintain.
 
 Expand **Instructions** and point to the four scoring rules. Point to **Tools**, **Knowledge**, and
@@ -236,20 +236,23 @@ Switch to the Hosted Agent playground in the browser. Point out:
 - **Code asset** and **Protocols**, which describe what was deployed rather than offering a portal
   code editor;
 - the same **Chat** playground used to invoke the deployed agent;
-- the live log stream for customer-owned runtime code; and
-- the **Details**, **Traces**, **Monitor**, **Evaluation**, and **Publish** surfaces.
+- the log stream for customer-owned runtime code, which starts after the first Playground message;
+  and
+- the **Details**, **Traces**, **Monitor**, **Evaluation**, and **Optimize** surfaces.
 
 Suggested transition:
 
 > “The Hosted Agent is built and changed in code, not in this setup pane. After deployment, it still
 > participates in the Foundry lifecycle: I can test it in the playground, inspect logs and traces,
-> evaluate it, monitor it, and publish it from the managed portal experience.”
+> evaluate it, monitor it, and optimize it from the managed portal experience.”
 
 In the top-level **Playground** tab, select the inner **Chat** tab, start a new chat, and paste the
 same support case.
 
 Again, call out P0, score 8, and the four reason codes. Explain that the calculation came from the
-customer-owned function. The generated wording can vary; the function result does not.
+customer-owned function. The generated wording can vary; the function result does not. After the
+response arrives, point to **Log stream** if you want to show that the customer-owned runtime handled
+the request.
 
 ### 5:15-6:15 — Compare responsibilities
 
