@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="640" viewBox="0 0 1240 640" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect width="1240" height="640" fill="#ffffff"/>
+<text x="30" y="44.0" font-size="24" fill="#000" font-weight="700">Portal demo: prompt the Hosted Agent, then read its trace</text>
+<rect x="40" y="100" width="220" height="80" rx="10" fill="#F3F2F1" stroke="#495057" stroke-width="2"/>
+<text x="150.0" y="130.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">1  Foundry portal</text>
+<text x="150.0" y="149.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">Build → Agents</text>
+<rect x="320" y="95" width="230" height="90" rx="10" fill="#CFE4FA" stroke="#0078D4" stroke-width="2"/>
+<text x="435.0" y="120.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">2  field-demo-support-</text>
+<text x="435.0" y="140.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">triage-hosted</text>
+<text x="435.0" y="159.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">playground</text>
+<rect x="610" y="100" width="200" height="80" rx="10" fill="#FFF4CE" stroke="#F7630C" stroke-width="2"/>
+<text x="710.0" y="130.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">3  Send the</text>
+<text x="710.0" y="149.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">30-minute case</text>
+<rect x="870" y="95" width="200" height="90" rx="10" fill="#DFF6DD" stroke="#107C10" stroke-width="2"/>
+<text x="970.0" y="120.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">4  Answer</text>
+<text x="970.0" y="140.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">P1 · score 5</text>
+<text x="970.0" y="159.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">3 reason codes</text>
+<rect x="870" y="250" width="200" height="80" rx="10" fill="#F3F2F1" stroke="#495057" stroke-width="2"/>
+<text x="970.0" y="280.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">5  Wait 2–5 min</text>
+<text x="970.0" y="299.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">open Traces</text>
+<path d="M260,140 L320,140" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M550,140 L610,140" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M810,140 L870,140" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M970,185 L970,250" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="40" y="230" width="760" height="360" rx="14" fill="none" stroke="#0078D4" stroke-width="2"/>
+<text x="54" y="254" font-size="16" font-weight="700" fill="#000">Hosted trace (one run)</text>
+<rect x="70" y="280" width="400" height="50" rx="10" fill="#F3F2F1" stroke="#495057" stroke-width="2"/>
+<text x="270.0" y="305.0" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000" font-family="Cascadia Code, Consolas, monospace">invoke_agent</text>
+<rect x="70" y="360" width="400" height="50" rx="10" fill="#E8DAEF" stroke="#5C2D91" stroke-width="2"/>
+<text x="270.0" y="385.0" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000" font-family="Cascadia Code, Consolas, monospace">chat  → tool_calls</text>
+<rect x="70" y="440" width="400" height="50" rx="10" fill="#DFF6DD" stroke="#107C10" stroke-width="2"/>
+<text x="270.0" y="465.0" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000" font-family="Cascadia Code, Consolas, monospace">execute_tool calculate_case_priority</text>
+<rect x="70" y="520" width="400" height="50" rx="10" fill="#E8DAEF" stroke="#5C2D91" stroke-width="2"/>
+<text x="270.0" y="545.0" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000" font-family="Cascadia Code, Consolas, monospace">chat  → stop (writes answer)</text>
+<rect x="530" y="400" width="250" height="130" rx="10" fill="#FFF4CE" stroke="#F7630C" stroke-width="2"/>
+<text x="655.0" y="446.8" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">Click execute_tool:</text>
+<text x="655.0" y="465.0" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000">in:  outage_minutes 30</text>
+<text x="655.0" y="483.2" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000">out: P1 · 5 · hosted-python</text>
+<path d="M270,330 L270,360" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M270,410 L270,440" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M270,490 L270,520" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M470,465 L530,465" fill="none" stroke="#1e1e1e" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<path d="M870,290 L470,305" fill="none" stroke="#1e1e1e" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<rect x="870" y="400" width="330" height="110" rx="10" fill="#FFF4CE" stroke="#F7630C" stroke-width="2"/>
+<text x="1035.0" y="436.8" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">Prompt Agent, same prompt:</text>
+<text x="1035.0" y="455.0" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000">invoke_agent → chat</text>
+<text x="1035.0" y="473.2" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000">(no tool span)</text>
+<text x="30" y="620.0" font-size="15" fill="#000" font-style="italic">The tool span is the proof: Python, not the model, decided the priority.</text>
+</svg>

@@ -1,7 +1,7 @@
 # Deploy the Hosted Agent
 
 This folder contains the Microsoft Foundry project and Hosted Agent deployment manifest for the
-fictional support-triage comparison. Use the [repository quickstart](../README.md) for the complete
+fictional support-triage comparison. Use the [repository quickstart](../docs/original-README.md) for the complete
 setup, Prompt Agent, Hosted Agent, presentation, troubleshooting, and cleanup workflow.
 
 ## Deployable source

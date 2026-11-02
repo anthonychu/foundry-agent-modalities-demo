@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="640" viewBox="0 0 1400 640" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect width="1400" height="640" fill="#ffffff"/>
+<text x="30" y="44.0" font-size="24" fill="#000" font-weight="700">In Foundry: same question, the rules live in different places</text>
+<rect x="30" y="80" width="1340" height="210" rx="14" fill="none" stroke="#F7630C" stroke-width="2"/>
+<text x="44" y="104" font-size="16" font-weight="700" fill="#000">Prompt Agent  (rules in English instructions)</text>
+<rect x="60" y="145" width="130" height="80" rx="10" fill="#F3F2F1" stroke="#495057" stroke-width="2"/>
+<text x="125.0" y="175.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">Playground</text>
+<text x="125.0" y="194.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">or API</text>
+<rect x="240" y="135" width="200" height="100" rx="10" fill="#FFF4CE" stroke="#F7630C" stroke-width="2"/>
+<text x="340.0" y="165.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">Prompt Agent</text>
+<text x="340.0" y="185.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">instructions.md</text>
+<text x="340.0" y="204.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">(edit in portal)</text>
+<rect x="490" y="135" width="330" height="100" rx="10" fill="#E8DAEF" stroke="#5C2D91" stroke-width="2"/>
+<text x="655.0" y="175.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">gpt-5.6-sol</text>
+<text x="655.0" y="194.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">reads the rules and does the math</text>
+<rect x="1210" y="145" width="140" height="80" rx="10" fill="#DFF6DD" stroke="#107C10" stroke-width="2"/>
+<text x="1280.0" y="175.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">P0 · score 8</text>
+<text x="1280.0" y="194.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">4 codes</text>
+<text x="490" y="270.0" font-size="14" fill="#000" font-style="italic">Trace: invoke_agent → chat (1 model call)</text>
+<path d="M190,185 L240,185" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M440,185 L490,185" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M820,185 L1210,185" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="30" y="330" width="1340" height="230" rx="14" fill="none" stroke="#0078D4" stroke-width="2"/>
+<text x="44" y="354" font-size="16" font-weight="700" fill="#000">Hosted Agent  (rules in Python, container run by Microsoft)</text>
+<rect x="60" y="405" width="130" height="80" rx="10" fill="#F3F2F1" stroke="#495057" stroke-width="2"/>
+<text x="125.0" y="435.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">Playground</text>
+<text x="125.0" y="454.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">or API</text>
+<rect x="240" y="395" width="200" height="100" rx="10" fill="#CFE4FA" stroke="#0078D4" stroke-width="2"/>
+<text x="340.0" y="425.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">Hosted Agent</text>
+<text x="340.0" y="445.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">main.py container</text>
+<text x="340.0" y="464.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">(code lives in git)</text>
+<rect x="490" y="395" width="170" height="100" rx="10" fill="#E8DAEF" stroke="#5C2D91" stroke-width="2"/>
+<text x="575.0" y="425.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">chat #1</text>
+<text x="575.0" y="445.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">model asks</text>
+<text x="575.0" y="464.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">for the tool</text>
+<rect x="710" y="395" width="230" height="100" rx="10" fill="#DFF6DD" stroke="#107C10" stroke-width="2"/>
+<text x="825.0" y="425.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">execute_tool</text>
+<text x="825.0" y="445.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">calculate_case_priority</text>
+<text x="825.0" y="464.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">priority_rules.py</text>
+<rect x="990" y="395" width="170" height="100" rx="10" fill="#E8DAEF" stroke="#5C2D91" stroke-width="2"/>
+<text x="1075.0" y="425.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">chat #2</text>
+<text x="1075.0" y="445.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">model writes</text>
+<text x="1075.0" y="464.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">the answer</text>
+<rect x="1210" y="405" width="140" height="80" rx="10" fill="#DFF6DD" stroke="#107C10" stroke-width="2"/>
+<text x="1280.0" y="435.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">P0 · score 8</text>
+<text x="1280.0" y="454.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">4 codes</text>
+<text x="490" y="530.0" font-size="14" fill="#000" font-style="italic">Trace: invoke_agent → chat → execute_tool → chat</text>
+<path d="M190,445 L240,445" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M440,445 L490,445" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M660,445 L710,445" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M940,445 L990,445" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M1160,445 L1210,445" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<text x="30" y="610.0" font-size="15" fill="#000" font-style="italic">azd deploy = new Hosted version.  Portal = test + monitor, not code edit.  Nothing runs in your resource group.</text>
+</svg>

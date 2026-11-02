@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect width="1100" height="560" fill="#ffffff"/>
+<text x="30" y="44.0" font-size="24" fill="#000" font-weight="700">Local run: your laptop runs the agent code, Foundry runs the model</text>
+<rect x="30" y="80" width="640" height="400" rx="14" fill="none" stroke="#0078D4" stroke-width="2"/>
+<text x="44" y="104" font-size="16" font-weight="700" fill="#000">Your laptop</text>
+<rect x="60" y="130" width="260" height="90" rx="10" fill="#F3F2F1" stroke="#495057" stroke-width="2"/>
+<text x="190.0" y="156.8" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">You</text>
+<text x="190.0" y="175.0" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000">azd ai agent invoke --local</text>
+<text x="190.0" y="193.20000000000002" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000">(or run-local-demo script)</text>
+<rect x="60" y="290" width="260" height="80" rx="10" fill="#CFE4FA" stroke="#0078D4" stroke-width="2"/>
+<text x="190.0" y="320.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">Agent server  localhost:8088</text>
+<text x="190.0" y="339.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">main.py</text>
+<rect x="380" y="280" width="260" height="100" rx="10" fill="#DFF6DD" stroke="#107C10" stroke-width="2"/>
+<text x="510.0" y="310.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">calculate_case_priority</text>
+<text x="510.0" y="330.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">priority_rules.py</text>
+<text x="510.0" y="349.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">(your Python rules)</text>
+<rect x="380" y="140" width="260" height="70" rx="10" fill="#FFF4CE" stroke="#F7630C" stroke-width="2"/>
+<text x="510.0" y="165.9" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">Edit a .py file → rerun</text>
+<text x="510.0" y="184.1" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000">seconds, no new version</text>
+<rect x="730" y="80" width="340" height="400" rx="14" fill="none" stroke="#5C2D91" stroke-width="2"/>
+<text x="744" y="104" font-size="16" font-weight="700" fill="#000">Azure: Foundry project</text>
+<rect x="770" y="280" width="260" height="100" rx="10" fill="#E8DAEF" stroke="#5C2D91" stroke-width="2"/>
+<text x="900.0" y="320.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">gpt-5.6-sol</text>
+<text x="900.0" y="339.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">model deployment</text>
+<rect x="770" y="140" width="260" height="70" rx="10" fill="#F3F2F1" stroke="#495057" stroke-width="2"/>
+<text x="900.0" y="165.9" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">Your az / azd login</text>
+<text x="900.0" y="184.1" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000">(DefaultAzureCredential)</text>
+<path d="M190,220 L190,290" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M320,330 L380,330" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M190,370 L190,430 L900,430 L900,380" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M510,210 L510,280" fill="none" stroke="#1e1e1e" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<text x="30" y="520.0" font-size="15" fill="#000" font-style="italic">The rules run on your machine. The model still runs in Foundry and is billed per token.</text>
+<rect x="151" y="234" width="78" height="21" rx="4" fill="#ffffff" opacity="0.92"/>
+<text x="190" y="245" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#333">case text</text>
+<rect x="311" y="310" width="78" height="21" rx="4" fill="#ffffff" opacity="0.92"/>
+<text x="350" y="320" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#333">tool call</text>
+<rect x="490" y="401" width="100" height="38" rx="4" fill="#ffffff" opacity="0.92"/>
+<text x="540" y="412" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#333">chat calls</text>
+<text x="540" y="428" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#333">(over HTTPS)</text>
+</svg>

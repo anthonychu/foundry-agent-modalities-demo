@@ -1,3 +1,5 @@
+> **Archived copy.** The upstream seven-minute presentation script, moved from the repository root. `VALIDATED_OUTPUT.md` is in the repository root. For the trace walkthrough, see [customer-demo.md](../customer-demo.md).
+
 # Present the Prompt Agents and Hosted Agents demo
 
 Use this guide after completing the setup in the main README. The presentation takes about seven

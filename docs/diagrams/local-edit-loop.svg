@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="470" viewBox="0 0 1160 470" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect width="1160" height="470" fill="#ffffff"/>
+<text x="30" y="44.0" font-size="24" fill="#000" font-weight="700">Local demo loop: change one rule, see a different answer</text>
+<rect x="40" y="110" width="230" height="100" rx="10" fill="#FFF4CE" stroke="#F7630C" stroke-width="2"/>
+<text x="155.0" y="140.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">1  Edit</text>
+<text x="155.0" y="160.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">priority_rules.py</text>
+<text x="155.0" y="179.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">outage &gt;= 60 → 30</text>
+<rect x="330" y="110" width="230" height="100" rx="10" fill="#DFF6DD" stroke="#107C10" stroke-width="2"/>
+<text x="445.0" y="150.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">2  Unit tests</text>
+<text x="445.0" y="169.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">py -m unittest</text>
+<rect x="620" y="110" width="230" height="100" rx="10" fill="#CFE4FA" stroke="#0078D4" stroke-width="2"/>
+<text x="735.0" y="140.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">3  run-local-demo</text>
+<text x="735.0" y="160.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">starts localhost:8088</text>
+<text x="735.0" y="179.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">sends 30-min case</text>
+<rect x="910" y="110" width="210" height="100" rx="10" fill="#E8DAEF" stroke="#5C2D91" stroke-width="2"/>
+<text x="1015.0" y="140.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">4  Compare</text>
+<text x="1015.0" y="160.0" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">before: P1 · 5</text>
+<text x="1015.0" y="179.5" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">after:  P0 · 8</text>
+<rect x="520" y="300" width="330" height="80" rx="10" fill="#F3F2F1" stroke="#495057" stroke-width="2"/>
+<text x="685.0" y="330.25" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">5  Revert</text>
+<text x="685.0" y="349.75" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#000">git checkout -- priority_rules.py</text>
+<rect x="910" y="300" width="210" height="80" rx="10" fill="#CFE4FA" stroke="#0078D4" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="1015.0" y="330.9" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000" font-weight="700">Optional: azd deploy</text>
+<text x="1015.0" y="349.09999999999997" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="#000">→ new Hosted version</text>
+<path d="M270,160 L330,160" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M560,160 L620,160" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M850,160 L910,160" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M1015,210 L1015,250 L685,250 L685,300" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M1015,210 L1015,300" fill="none" stroke="#1e1e1e" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<path d="M520,340 L155,340 L155,210" fill="none" stroke="#1e1e1e" stroke-width="2" marker-end="url(#ah)"/>
+<text x="30" y="440.0" font-size="15" fill="#000" font-style="italic">No cloud deploy needed: the edited Python runs on your laptop; only the model call goes to Foundry.</text>
+<rect x="207" y="320" width="131" height="21" rx="4" fill="#ffffff" opacity="0.92"/>
+<text x="272" y="330" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#333">try another rule</text>
+</svg>
